@@ -1,0 +1,11 @@
+obj_dir
+*.vcd
+*.log
+*.hex
+*.elf
+*.bin
+*.dump
+*.vcd
+*.log
+work/
+x*

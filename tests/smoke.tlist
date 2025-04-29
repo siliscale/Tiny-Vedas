@@ -1,0 +1,9 @@
+asm.basic_lui
+asm.basic_li
+asm.basic_forwarding
+asm.basic_alu_i
+asm.basic_alu_r
+asm.basic_mul
+asm.basic_mul_forwarding
+asm.basic_load
+asm.basic_store
