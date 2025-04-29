@@ -4,7 +4,7 @@ This is the main repository for the free [RISC-V Processor Design Course](https:
 
 Here, you will find all the slides, notes, and code for the course.
 
-The goal of this course is to design a RISC-V RV32IM processor from scratch, that we'll call Tiny Vedas, to run [CoreMark](https://github.com/eembc/coremark), a standard benchmark for microcontrollers.
+The goal of this course is to design a RISC-V RV32IM processor from scratch, that we'll call Tiny Vedas, to run [Dhrystone](https://github.com/sifive/benchmark-dhrystone), a benchmark designed for RISC-V processors.
 
 ## Course Outline
 
@@ -21,13 +21,13 @@ The course is divided into main + bonus lectures.
 - [Lecture 8 - Pipeline Stalls, Multiplier and Divider](docs/lecture_8/slides.pdf)
 - [Lecture 9 - Aligned and Unaligned memory access, Load/Store Unit](docs/lecture_9/slides.pdf)
 - [Lecture 10 - Handling Branches, Control Hazards and Pipeline Flushes](docs/lecture_10/slides.pdf)
-- [Lecture 11 - Running CoreMark, Conclusion](docs/lecture_11/slides.pdf)
+- [Lecture 11 - Implementing printf,Running Dhrystone, Conclusion](docs/lecture_11/slides.pdf)
 
 **Bonus Lectures**
 - Lecture B1 - Deploying Tiny Vedas to Arty Z7-20 FPGA
 - Lecture B2 - Building a Chip: Tiny Vedas on 7nm with OpenRoad and ASAP7
 
-Bonus lectures are only available to my [Patrons](https://patreon.com/riscv_mastery_course_0/membership?utm_medium=unknown&utm_source=join_link&utm_campaign=gitlab_codebase&utm_content=copyLink).
+You can buy bonus lectures [here](https://rv-mastery.com/courses/tiny-vedas-course-add-on).
 
 # What computer do I need?
 
@@ -60,18 +60,4 @@ make
 
 # Need Support?
 
-I don't reply to inquiries about the course via email since it has 10K+ views. If you need support, consider becoming a [Patron](https://patreon.com/riscv_mastery_course_0/membership?utm_medium=unknown&utm_source=join_link&utm_campaign=gitlab_codebase&utm_content=copyLink). There, I have a dedicated support team specifically for this course.
-
-# Need a certificate of completion?
-
-I'm working on setting up a platform for final examination and certification. This will be a paid service, opportunely discounted for my patrons. I think this will be extremely helpful in getting past all the AI screening of resumes that employers are doing these days.
-
-# Need Mentorship for your career/projects?
-
-I'm opening up a few limited spots for mentorship. If you're interested, apply by sending an email to [mentorship@rv-mastery.com](mailto:mentorship@rv-mastery.com) with your background, what you're trying to accomplish and what timeline do you have in mind.
-
-
-
-
-
-
+Open a Github issue.
