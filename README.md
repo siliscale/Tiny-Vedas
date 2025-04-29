@@ -42,7 +42,7 @@ In order to run the examples for each lecture, you need to clone this repo. Make
 After that, you can clone the repo using the following command:
 
 ```bash
-git clone git@gitlab.rv-mastery.com:risc-v-mastery/tiny-vedas.git
+git clone git@github.com:siliscale/Tiny-Vedas.git
 ```
 
 # Running the examples
