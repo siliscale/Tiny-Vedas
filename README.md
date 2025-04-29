@@ -37,7 +37,7 @@ Anything built after the last decade should be more than enough to run the cours
 
 # Cloning this repo
 
-In order to run the examples for each lecture, you need to clone this repo. Make sure to [add an SSH Key to your gitlab account](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/How-to-configure-GitLab-SSH-keys-for-secure-Git-connections).
+In order to run the examples for each lecture, you need to clone this repo. Make sure to add and use an SSH Key to your Github account.
 
 After that, you can clone the repo using the following command:
 
