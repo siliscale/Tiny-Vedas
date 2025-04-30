@@ -102,7 +102,7 @@ module alu (
 
 
   assign {pc_cout, pc} = ({XLEN+1{(alu_ctrl.jal & alu_ctrl.pc)| alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.instr_tag[XLEN-1:0])) |
-                         ({XLEN+1{(alu_ctrl.jal &~alu_ctrl.pc)| alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.rs1_data[XLEN-1:0]));
+                         ({XLEN+1{(alu_ctrl.jal &~alu_ctrl.pc)}} & (alu_ctrl.imm + alu_ctrl.rs1_data[XLEN-1:0]));
 
   assign brn_taken = (alu_ctrl.beq & eq) | (alu_ctrl.bne & ne) | (alu_ctrl.bge & ge) | (alu_ctrl.blt & lt);
 
