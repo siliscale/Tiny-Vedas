@@ -73,7 +73,7 @@ module alu (
 
   /* For JAL/JALR operation, we reuse the same datapath for reg file update */
 
-  assign a = ((alu_ctrl.jal & alu_ctrl.pc) | alu_ctrl.condbr) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
+  assign a = (alu_ctrl.jal | alu_ctrl.condbr) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
 
   assign b = ({XLEN{alu_ctrl.imm_valid}} & alu_ctrl.imm) |
              ({XLEN{alu_ctrl.shimm5}} & {{(XLEN-5){1'b0}}, alu_ctrl.shamt[$clog2(
@@ -101,7 +101,8 @@ module alu (
                         ( ~a[XLEN-1:0] &  b[XLEN-1:0] & {XLEN{logic_sel[1]}} );
 
 
-  assign {pc_cout, pc} = ({XLEN+1{alu_ctrl.jal | alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.instr_tag[XLEN-1:0]));
+  assign {pc_cout, pc} = ({XLEN+1{(alu_ctrl.jal & alu_ctrl.pc)| alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.instr_tag[XLEN-1:0])) |
+                         ({XLEN+1{(alu_ctrl.jal &~alu_ctrl.pc)| alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.rs1_data[XLEN-1:0]));
 
   assign brn_taken = (alu_ctrl.beq & eq) | (alu_ctrl.bne & ne) | (alu_ctrl.bge & ge) | (alu_ctrl.blt & lt);
 
