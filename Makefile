@@ -30,3 +30,4 @@ clean:
 	rm -rf *.zip
 	rm -rf *.wdb
 	rm -rf .Xil
+	rm -rf work

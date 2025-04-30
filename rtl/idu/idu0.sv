@@ -65,7 +65,7 @@ module idu0 (
   assign idu0_out_i.rs2_addr = instr[24:20];
 
   assign idu0_out_i.imm = ({32{decode_out.imm20 & ~decode_out.pc}} & {instr[31:12], 12'h0}) |
-                          ({32{decode_out.imm20 & decode_out.pc}} & {{4{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:25], 12'h0}) |
+                          ({32{decode_out.imm20 & decode_out.pc}} & {{11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'h0}) |
                           ({32{decode_out.imm12}} & {{20{instr[31]}}, instr[31:20]}) |
                           ({32{decode_out.condbr}} & {{19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0}) |
                           ({32{decode_out.load}} & {{20{instr[31]}}, instr[31:20]}) |

@@ -211,6 +211,16 @@ module pc #(
       .dout     (pc_q[PC_WIDTH-1:0])
   );
 
+  logic [PC_WIDTH-1:0] last_pc;
+
+  always_ff @(posedge clk) begin
+    if (!rst_n) begin
+      last_pc <= 'b0;
+    end else if (!stall) begin
+      last_pc <= pc_q;
+    end
+  end
+
   always_comb begin
     unique casez ({
       load, inc, stall
@@ -223,7 +233,7 @@ module pc #(
       3'b??1: begin  // Stall
         update_pc = 1'b0;
         pc_d = 'b0;
-        pc_out_valid = 1'b0;
+        pc_out_valid = 1'b1;
       end
       3'b010: begin  // Inc
         update_pc = 1'b1;
@@ -238,7 +248,7 @@ module pc #(
     endcase
   end
 
-  assign pc_out[PC_WIDTH-1:0] = pc_q[PC_WIDTH-1:0];
+  assign pc_out[PC_WIDTH-1:0] = (stall) ? last_pc[PC_WIDTH-1:0] : pc_q[PC_WIDTH-1:0];
 
 endmodule
 

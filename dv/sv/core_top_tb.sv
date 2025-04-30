@@ -87,7 +87,7 @@ module core_top_tb;
       cycle_count <= cycle_count + 1;
       cycle_count_last_retired <= cycle_count + 1;
     end
-    if (core_top_i.exu_wb_rd_wr_en) begin
+    if (core_top_i.exu_wb_rd_wr_en | (core_top_i.exu_inst.lsu_inst.dc2_legal & core_top_i.exu_inst.lsu_inst.dc2_store) | (core_top_i.exu_inst.lsu_inst.dc3_legal & core_top_i.exu_inst.lsu_inst.dc3_store)) begin
       cycle_count_last_retired <= 'b0;
     end
   end
@@ -95,9 +95,13 @@ module core_top_tb;
   /* Use the monitor to log the log file */
   always_ff @(posedge clk) begin
     /* Log everytime we touch the state of our core: Write to the register file, change the PC and store to memory */
-    if (core_top_i.exu_wb_rd_wr_en) begin  /* Hierarchical naming */
+    if (core_top_i.exu_wb_rd_wr_en & ~core_top_i.ifu_inst.pc_load) begin  /* Hierarchical naming */
       $fdisplay(fd, "%5d;0x%H;0x%H;x%0D=0x%H", cycle_count, core_top_i.exu_instr_tag_out,
                 core_top_i.exu_instr_out, core_top_i.exu_wb_rd_addr, core_top_i.exu_wb_data);
+    end
+    if (core_top_i.exu_wb_rd_wr_en & core_top_i.ifu_inst.pc_load) begin  /* Hierarchical naming */
+      $fdisplay(fd, "%5d;0x%H;0x%H;x%0D=0x%H;pc=0x%H", cycle_count, core_top_i.exu_instr_tag_out,
+                core_top_i.exu_instr_out, core_top_i.exu_wb_rd_addr, core_top_i.exu_wb_data, core_top_i.ifu_inst.pc_exu);
     end
 
     if (core_top_i.exu_inst.lsu_inst.dc2_legal & core_top_i.exu_inst.lsu_inst.dc2_store) begin

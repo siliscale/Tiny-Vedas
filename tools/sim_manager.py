@@ -152,7 +152,7 @@ def compare_results(test: str) -> None:
             'pc': line[0],
             'instr': line[1],
             'mnemonic': line[2],
-            'touch': line[3]
+            'touch': line[3:]
         })
     for line in rtl_log.split("\n"):
         if line != "":
@@ -160,7 +160,7 @@ def compare_results(test: str) -> None:
             rtl_exe.append({
                 'pc': line[1],
                 'instr': line[2],
-                'touch': line[3]
+                'touch': line[3:]
             })
 
     # Compare the logs
@@ -178,11 +178,20 @@ def compare_results(test: str) -> None:
                 sim_log.write(f"ISS: {iss_exe[iss_idx]['instr']}\n")
                 sim_log.write(f"RTL: {rtl_exe[iss_idx]['instr']}\n")
                 test_passed = False
-            elif str(iss_exe[iss_idx]['touch']).upper() != str(rtl_exe[iss_idx]['touch']).upper():
+            # Diffetent lenght of touch
+            elif len(iss_exe[iss_idx]['touch']) != len(rtl_exe[iss_idx]['touch']):
                 sim_log.write(f"Error: Result mismatch at PC {iss_exe[iss_idx]['pc']} for instruction --> {iss_exe[iss_idx]['mnemonic']}\n")
                 sim_log.write(f"ISS: {iss_exe[iss_idx]['touch']}\n")
                 sim_log.write(f"RTL: {rtl_exe[iss_idx]['touch']}\n")
                 test_passed = False
+            # Same length, check each element
+            else:
+                for touch_idx in range(len(iss_exe[iss_idx]['touch'])):
+                    if str(iss_exe[iss_idx]['touch'][touch_idx]).upper() != str(rtl_exe[iss_idx]['touch'][touch_idx]).upper():
+                        sim_log.write(f"Error: Result mismatch at PC {iss_exe[iss_idx]['pc']} for instruction --> {iss_exe[iss_idx]['mnemonic']}\n")
+                        sim_log.write(f"ISS: {iss_exe[iss_idx]['touch'][touch_idx]}\n")
+                        sim_log.write(f"RTL: {rtl_exe[iss_idx]['touch'][touch_idx]}\n")
+                        test_passed = False
     if test_passed:
         print(f"{test} {'.' * (50 - len(test))}. PASSED")
     else:

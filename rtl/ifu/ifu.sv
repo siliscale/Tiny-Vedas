@@ -52,6 +52,7 @@ module ifu (
 );
 
   logic [XLEN-1:0] pc_out;
+  logic            pc_out_valid;
 
   assign instr_mem_addr = pc_out[INSTR_MEM_ADDR_WIDTH-1:0];  /* Crop the PC since the instr_mem_addr
                                                                 is narrower than the PC */
@@ -67,8 +68,10 @@ module ifu (
       .stall       (pipe_stall),
       .pc_in       (pc_exu),
       .pc_out      (pc_out),
-      .pc_out_valid(instr_mem_addr_valid)
+      .pc_out_valid(pc_out_valid)
   );
+
+  assign instr_mem_addr_valid = pc_out_valid & ~pc_load;
 
   /* Generate the outputs */
   dff_rst_en_flush #(INSTR_LEN + 1 + XLEN) instr_dff_rst_inst (

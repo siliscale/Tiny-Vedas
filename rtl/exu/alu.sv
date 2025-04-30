@@ -101,7 +101,7 @@ module alu (
                         ( ~a[XLEN-1:0] &  b[XLEN-1:0] & {XLEN{logic_sel[1]}} );
 
 
-  assign {pc_cout, pc} = ({XLEN+1{alu_ctrl.jal | alu_ctrl.condbr}} & (a[XLEN-1:0] + alu_ctrl.instr_tag[XLEN-1:0]));
+  assign {pc_cout, pc} = ({XLEN+1{alu_ctrl.jal | alu_ctrl.condbr}} & (alu_ctrl.imm + alu_ctrl.instr_tag[XLEN-1:0]));
 
   assign brn_taken = (alu_ctrl.beq & eq) | (alu_ctrl.bne & ne) | (alu_ctrl.bge & ge) | (alu_ctrl.blt & lt);
 
@@ -120,7 +120,7 @@ module alu (
 
   assign sel_shift = |{alu_ctrl.sll, alu_ctrl.srl, alu_ctrl.sra};
 
-  assign sel_adder = (alu_ctrl.add | alu_ctrl.sub) & ~alu_ctrl.slt;
+  assign sel_adder = (alu_ctrl.add | alu_ctrl.sub | alu_ctrl.jal) & ~alu_ctrl.slt;
 
   assign lt = (~alu_ctrl.unsign & (neg ^ ov)) | (alu_ctrl.unsign & ~cout);
 
