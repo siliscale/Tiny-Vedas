@@ -13,4 +13,4 @@ _start:
     nop
     nop
     nop
-    ret
+    .include "eot_sequence.s"

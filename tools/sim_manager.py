@@ -23,7 +23,7 @@ def run_gen(test: str) -> None:
         extension = ".s"
     # Try and compile the test, if it fails, print the error and exit
     try:
-        os.system(f"riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -o work/{test}/test.elf -nostdlib -Ttext 0x100000 {os.path.join('tests', test_path[0], test_path[1] + extension)}")
+        os.system(f"riscv64-unknown-elf-gcc -I{os.path.join('tests', test_path[0])} -march=rv32im -mabi=ilp32 -o work/{test}/test.elf -nostdlib -Ttext 0x100000 {os.path.join('tests', test_path[0], test_path[1] + extension)} > {os.path.join('work', test, 'compile.log')}")
     except Exception as e:
         print(f"Error compiling test {test}: {e}")
         sys.exit(1)
@@ -162,10 +162,6 @@ def compare_results(test: str) -> None:
                 'instr': line[2],
                 'touch': line[3]
             })
-
-    # Remove last instruction from both logs
-    iss_exe.pop()
-    rtl_exe.pop()
 
     # Compare the logs
     test_passed = True

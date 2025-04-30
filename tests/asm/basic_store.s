@@ -37,5 +37,5 @@ _start:
     sw x31, 14(x0)
     lw x2,  12(x0)
     lw x2,  16(x0)
-    ret
+    .include "eot_sequence.s"
     

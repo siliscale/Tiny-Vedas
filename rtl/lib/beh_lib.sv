@@ -59,6 +59,36 @@ module dff_rst #(
 
 endmodule
 
+/* ***** D Flip-Flop w/ Reset & Enable & Flush ***** */
+
+module dff_rst_flush #(
+    parameter int WIDTH = 1,
+    parameter logic [WIDTH-1:0] RESET_VAL = 0
+) (
+    input logic [WIDTH-1:0] din,
+    input logic             clk,
+    input logic             rst_n,
+    input logic             flush,
+
+    output logic [WIDTH-1:0] dout
+);
+
+  logic [WIDTH-1:0] din_i;
+  logic [WIDTH-1:0] dout_i;
+
+  assign din_i[WIDTH-1:0] = (flush) ? RESET_VAL[WIDTH-1:0] : din[WIDTH-1:0];
+  assign dout[WIDTH-1:0]  = (flush) ? RESET_VAL[WIDTH-1:0] : dout_i[WIDTH-1:0];
+
+  dff_rst_en #(WIDTH, RESET_VAL) dff_rst_inst (
+      .din(din_i[WIDTH-1:0]),
+      .clk(clk),
+      .rst_n(rst_n),
+      .en(~flush),
+      .dout(dout_i[WIDTH-1:0])
+  );
+
+endmodule
+
 /* ***** D Flip-Flop w/ Reset & Reset Vector ***** */
 module dff_rst_vector #(
     parameter int WIDTH = 1,
@@ -94,6 +124,37 @@ module dff_rst_en #(
   dff_rst #(WIDTH, RESET_VAL) dff_rst_inst (
       .din((en) ? din[WIDTH-1:0] : dout[WIDTH-1:0]),
       .*
+  );
+
+endmodule
+
+/* ***** D Flip-Flop w/ Reset & Enable & Flush ***** */
+
+module dff_rst_en_flush #(
+    parameter int WIDTH = 1,
+    parameter logic [WIDTH-1:0] RESET_VAL = 0
+) (
+    input logic [WIDTH-1:0] din,
+    input logic             clk,
+    input logic             rst_n,
+    input logic             en,
+    input logic             flush,
+
+    output logic [WIDTH-1:0] dout
+);
+
+  logic [WIDTH-1:0] din_i;
+  logic [WIDTH-1:0] dout_i;
+
+  assign din_i[WIDTH-1:0] = (flush) ? RESET_VAL[WIDTH-1:0] : din[WIDTH-1:0];
+  assign dout[WIDTH-1:0]  = (flush) ? RESET_VAL[WIDTH-1:0] : dout_i[WIDTH-1:0];
+
+  dff_rst_en #(WIDTH, RESET_VAL) dff_rst_en_inst (
+      .din  (din_i[WIDTH-1:0]),
+      .clk  (clk),
+      .rst_n(rst_n),
+      .en   (en),
+      .dout (dout_i[WIDTH-1:0])
   );
 
 endmodule

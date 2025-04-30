@@ -74,6 +74,10 @@ module core_top #(
   logic                                 exu_lsu_busy;
   logic                                 exu_lsu_stall;
 
+  /* EXU -> PC Interface */
+  logic      [                XLEN-1:0] pc_out;
+  logic                                 pc_load;
+
   /* Data Memory */
   logic      [                XLEN-1:0] dccm_raddr;
   logic                                 dccm_rvalid_in;
@@ -119,7 +123,9 @@ module core_top #(
       .instr                (instr),
       .instr_valid          (instr_valid),
       .instr_tag            (instr_tag),
-      .pipe_stall           (pipe_stall)
+      .pipe_stall           (pipe_stall),
+      .pc_exu               (pc_out),
+      .pc_load              (pc_load)
   );
 
   /* Instruction Decode Unit - Stage 0 */
@@ -130,7 +136,8 @@ module core_top #(
       .instr_valid(instr_valid),
       .instr_tag  (instr_tag),
       .pipe_stall (pipe_stall),
-      .idu0_out   (idu0_out)
+      .idu0_out   (idu0_out),
+      .pipe_flush (pc_load)
   );
 
   /* Instruction Decode Unit - Stage 1 */
@@ -146,7 +153,8 @@ module core_top #(
       .exu_div_busy   (exu_div_busy),
       .exu_lsu_busy   (exu_lsu_busy),
       .exu_lsu_stall  (exu_lsu_stall),
-      .pipe_stall     (pipe_stall)
+      .pipe_stall     (pipe_stall),
+      .pipe_flush     (pc_load)
   );
 
   /* Execute Unit */
@@ -170,7 +178,9 @@ module core_top #(
       .dccm_rvalid_out(dccm_rvalid_out),
       .dccm_waddr     (dccm_waddr),
       .dccm_wen       (dccm_wen),
-      .dccm_wdata     (dccm_wdata)
+      .dccm_wdata     (dccm_wdata),
+      .pc_out         (pc_out),
+      .pc_load        (pc_load)
   );
 
   dccm #(

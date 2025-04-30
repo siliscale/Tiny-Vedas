@@ -3,5 +3,5 @@
 
 _start:
     li x1, 0xdeadbeef
-    ret
+    .include "eot_sequence.s"
     

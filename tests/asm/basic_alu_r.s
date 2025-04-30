@@ -14,4 +14,4 @@ _start:
     sll x25, x1, x3
     srl x24, x1, x3
     sra x24, x1, x3
-    ret
+    .include "eot_sequence.s"

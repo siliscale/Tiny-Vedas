@@ -59,16 +59,36 @@ module core_top_tb;
       @(negedge clk);
     end
     rst_n = 1;
-    for (int i = 0; i < 100; i++) begin
-      @(negedge clk);
+  end
+
+  /* Finish Sequence Detector */
+  logic finish_seq_detected;
+  always_ff @(posedge clk) begin
+    if (core_top_i.dccm_wen & core_top_i.dccm_waddr == 32'h10000000) begin
+      finish_seq_detected <= 1;
     end
-    $finish;
+  end
+
+
+  logic [31:0] cycle_count_last_retired;
+  always_ff @(posedge clk) begin
+    if (finish_seq_detected) begin
+      $finish;
+    end
+    if (cycle_count_last_retired > 1000) begin
+      $fdisplay(fd, "Nothing retired in 1000 cycles... Aborting");
+      $finish;
+    end
   end
 
   /* Cycle counter */
   always_ff @(posedge clk) begin
     if (rst_n) begin
       cycle_count <= cycle_count + 1;
+      cycle_count_last_retired <= cycle_count + 1;
+    end
+    if (core_top_i.exu_wb_rd_wr_en) begin
+      cycle_count_last_retired <= 'b0;
     end
   end
 
@@ -81,15 +101,21 @@ module core_top_tb;
     end
 
     if (core_top_i.exu_inst.lsu_inst.dc2_legal & core_top_i.exu_inst.lsu_inst.dc2_store) begin
-      $fdisplay(fd, "%5d;0x%H;0x%H;mem[0x%8H]=0x%H", cycle_count,
-                core_top_i.exu_inst.lsu_inst.dc2_lsu_instr_tag_out, core_top_i.exu_inst.lsu_inst.dc2_lsu_instr_out,
-                core_top_i.exu_inst.lsu_inst.dc2_computed_addr, core_top_i.exu_inst.lsu_inst.dc2_store_buffer[XLEN-1:0] & core_top_i.exu_inst.lsu_inst.dc2_store_mask_base[XLEN-1:0]);
+      $fdisplay(
+          fd, "%5d;0x%H;0x%H;mem[0x%8H]=0x%H", cycle_count,
+          core_top_i.exu_inst.lsu_inst.dc2_lsu_instr_tag_out,
+          core_top_i.exu_inst.lsu_inst.dc2_lsu_instr_out,
+          core_top_i.exu_inst.lsu_inst.dc2_computed_addr,
+          core_top_i.exu_inst.lsu_inst.dc2_store_buffer[XLEN-1:0] & core_top_i.exu_inst.lsu_inst.dc2_store_mask_base[XLEN-1:0]);
     end
 
     if (core_top_i.exu_inst.lsu_inst.dc3_legal & core_top_i.exu_inst.lsu_inst.dc3_store & core_top_i.exu_inst.lsu_inst.dc3_unaligned_addr) begin
-      $fdisplay(fd, "%5d;0x%H;0x%H;mem[0x%8H]=0x%H", cycle_count,
-                core_top_i.exu_inst.lsu_inst.dc3_lsu_instr_tag_out, core_top_i.exu_inst.lsu_inst.dc3_lsu_instr_out,
-                core_top_i.exu_inst.lsu_inst.dc3_computed_addr, core_top_i.exu_inst.lsu_inst.dc3_store_buffer[XLEN-1:0] & core_top_i.exu_inst.lsu_inst.dc3_wb_data_mask[XLEN-1:0]);
+      $fdisplay(
+          fd, "%5d;0x%H;0x%H;mem[0x%8H]=0x%H", cycle_count,
+          core_top_i.exu_inst.lsu_inst.dc3_lsu_instr_tag_out,
+          core_top_i.exu_inst.lsu_inst.dc3_lsu_instr_out,
+          core_top_i.exu_inst.lsu_inst.dc3_computed_addr,
+          core_top_i.exu_inst.lsu_inst.dc3_store_buffer[XLEN-1:0] & core_top_i.exu_inst.lsu_inst.dc3_wb_data_mask[XLEN-1:0]);
     end
   end
 

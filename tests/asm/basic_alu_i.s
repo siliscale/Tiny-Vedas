@@ -13,4 +13,4 @@ _start:
     slli x25, x1, 0x4
     srli x24, x1, 0x4
     srai x24, x1, 0x4
-    ret
+    .include "eot_sequence.s"

@@ -14,5 +14,5 @@ _start:
     lh x2, 1(x0)
     lh x3, 2(x0)
     lh x4, 3(x0)
-    ret
+    .include "eot_sequence.s"
     

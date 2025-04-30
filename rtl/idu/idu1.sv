@@ -41,16 +41,16 @@ module idu1 (
     output idu1_out_t idu1_out,
 
     /* Control Signals */
-    output logic pipe_stall,
-
+    output logic            pipe_stall,
+    input  logic            pipe_flush,
     /* EXU -> IDU1 (WB) Interface */
-    input logic [XLEN-1:0] exu_wb_data,
-    input logic [     4:0] exu_wb_rd_addr,
-    input logic            exu_wb_rd_wr_en,
-    input logic            exu_mul_busy,
-    input logic            exu_div_busy,
-    input logic            exu_lsu_busy,
-    input logic            exu_lsu_stall
+    input  logic [XLEN-1:0] exu_wb_data,
+    input  logic [     4:0] exu_wb_rd_addr,
+    input  logic            exu_wb_rd_wr_en,
+    input  logic            exu_mul_busy,
+    input  logic            exu_div_busy,
+    input  logic            exu_lsu_busy,
+    input  logic            exu_lsu_stall
 );
 
   idu1_out_t idu1_out_i;
@@ -127,17 +127,18 @@ module idu1 (
   assign idu1_out_i.nop = idu0_out.nop;
   assign idu1_out_i.legal = idu0_out.legal;
 
-  dff_rst_en #(
+  dff_rst_en_flush #(
       .WIDTH($bits(idu1_out_t))
   ) idu1_out_reg (
       .clk  (clk),
       .rst_n(rst_n),
       .din  (idu1_out_i),
       .dout (idu1_out_before_fwd),
-      .en   (~pipe_stall)
+      .en   (~pipe_stall),
+      .flush(pipe_flush)
   );
 
-  dff_rst_en #(
+  dff_rst_en_flush #(
       .WIDTH($bits(last_issued_instr_t))
   ) last_issued_instr_reg (
       .clk(clk),
@@ -154,7 +155,8 @@ module idu1 (
         (idu1_out_before_fwd.load | idu1_out_before_fwd.store)
       }),
       .dout(last_issued_instr),
-      .en(~pipe_stall)
+      .en(~pipe_stall),
+      .flush(pipe_flush)
   );
 
   /* WB to EXU forwarding */

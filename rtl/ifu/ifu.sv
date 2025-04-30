@@ -40,6 +40,10 @@ module ifu (
     input  logic                            instr_mem_rdata_valid,
     input  logic [ INSTR_MEM_TAG_WIDTH-1:0] instr_mem_tag_in,
 
+    /* EXU -> IFU Interface */
+    input logic [XLEN-1:0] pc_exu,
+    input logic            pc_load,
+
     /* Control Signals */
     input  logic                 pipe_stall,
     output logic [INSTR_LEN-1:0] instr,
@@ -58,20 +62,21 @@ module ifu (
       .clk         (clk),
       .rst_n       (rst_n),
       .reset_vector(reset_vector),
-      .load        (1'b0),                 /* To be changed later */
-      .inc         (1'b1),          /* To be changed later */
-      .stall       (pipe_stall),           /* To be changed later */
-      .pc_in       (32'h00000000),         /* To be changed later */
+      .load        (pc_load),
+      .inc         (~pc_load),
+      .stall       (pipe_stall),
+      .pc_in       (pc_exu),
       .pc_out      (pc_out),
       .pc_out_valid(instr_mem_addr_valid)
   );
 
   /* Generate the outputs */
-  dff_rst_en #(INSTR_LEN + 1 + XLEN) instr_dff_rst_inst (
+  dff_rst_en_flush #(INSTR_LEN + 1 + XLEN) instr_dff_rst_inst (
       .clk  (clk),
       .rst_n(rst_n),
       .din  ({instr_mem_rdata_valid, instr_mem_rdata, instr_mem_tag_in}),
       .dout ({instr_valid, instr, instr_tag}),
-      .en   (~pipe_stall)
+      .en   (~pipe_stall),
+      .flush(pc_load)
   );
 endmodule
