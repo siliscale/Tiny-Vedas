@@ -2,13 +2,13 @@
 .section .text
 
 _start:
-    li x1, 0xcafebabe
-    bne x0, x1, target
+    li x1, 0xFFFFFFFF
+    blt x1, x0, target
     li x1, 0xdeadbeef # Should not be executed
 
 target:
-    li x2, 0xcafebabe
-    bne x2, x1, zombie
+    li x2, 0xFFFFFFFE
+    blt x1, x2, zombie
     .include "eot_sequence.s"
 
 zombie:

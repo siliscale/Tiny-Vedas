@@ -82,9 +82,9 @@ module alu (
 
   assign bm[XLEN-1:0] = (alu_ctrl.sub) ? ~b[XLEN-1:0] : b[XLEN-1:0];
 
-  assign {cout, aout[31:0]} = {1'b0, a[31:0]} + {1'b0, bm[31:0]} + {32'b0, alu_ctrl.sub};
+  assign {cout, aout[XLEN-1:0]} = {1'b0, a[XLEN-1:0]} + {1'b0, bm[XLEN-1:0]} + {{XLEN{1'b0}}, alu_ctrl.sub};
 
-  assign ov = (~a[31] & ~b[31] & aout[31]) | (a[31] & b[31] & ~aout[31]);
+  assign ov = (~a[XLEN-1] & ~bm[XLEN-1] & aout[XLEN-1]) | (a[XLEN-1] & bm[XLEN-1] & ~aout[XLEN-1]);
 
   assign neg = aout[XLEN-1];
 
