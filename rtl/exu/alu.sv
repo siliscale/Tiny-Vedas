@@ -73,7 +73,7 @@ module alu (
 
   /* For JAL/JALR operation, we reuse the same datapath for reg file update */
 
-  assign a = (alu_ctrl.jal | alu_ctrl.condbr) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
+  assign a = (alu_ctrl.jal) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
 
   assign b = ({XLEN{alu_ctrl.imm_valid}} & alu_ctrl.imm) |
              ({XLEN{alu_ctrl.shimm5}} & {{(XLEN-5){1'b0}}, alu_ctrl.shamt[$clog2(

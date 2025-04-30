@@ -9,3 +9,4 @@ asm.basic_load
 asm.basic_store
 asm.basic_jal
 asm.basic_jalr
+asm.basic_beq

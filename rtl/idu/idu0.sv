@@ -71,10 +71,9 @@ module idu0 (
                           ({32{decode_out.load}} & {{20{instr[31]}}, instr[31:20]}) |
                           ({32{decode_out.store}} & {{20{instr[31]}}, instr[31:25], instr[11:7]});
 
-  /* imm_valid is high ONLY when the immediate is used in the register file path, for JAL/JALR, is used in the PC path */
+  /* imm_valid is high ONLY when the immediate is used in the register file path, for branch ops, is used in the PC path */
   assign idu0_out_i.imm_valid = (decode_out.imm20 & ~decode_out.jal) |
                                 decode_out.imm12 |
-                                decode_out.condbr |
                                 decode_out.load |
                                 decode_out.store;
 
