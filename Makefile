@@ -1,14 +1,15 @@
 
 slides:
-	cd docs/lecture_1 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_2 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_3 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_4 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_5 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_6 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_7 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_8 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
-	cd docs/lecture_9 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files
+	cd docs/lecture_1 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_2 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_3 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_4 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_5 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_6 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_7 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_8 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_9 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
+	cd docs/lecture_10 && npx @marp-team/marp-cli slides.md -o slides.pdf --allow-local-files &
 core_top_sim:
 	@verilator --cc --trace --trace-structs --build --timing --top-module core_top_tb --exe dv/verilator/core_top_tb.cpp -f rtl/core_top.flist -Irtl/include -DICCM_INIT_FILE="\"\"" -DRESET_VECTOR=\'h80000000
 	@make -j -C obj_dir -f Vcore_top_tb.mk Vcore_top_tb
