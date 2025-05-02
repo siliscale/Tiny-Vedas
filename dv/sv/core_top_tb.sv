@@ -31,6 +31,7 @@ module core_top_tb;
 
   localparam string ICCM_INIT_FILE = `ICCM_INIT_FILE;
   localparam string DCCM_INIT_FILE = `DCCM_INIT_FILE;
+  localparam logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = `STACK_POINTER_INIT_VALUE;
 
   logic            clk = 0;
   logic            rst_n;
@@ -42,8 +43,9 @@ module core_top_tb;
 
   /* DUT Instantiation */
   core_top #(
-      .ICCM_INIT_FILE(ICCM_INIT_FILE),
-      .DCCM_INIT_FILE(DCCM_INIT_FILE)
+      .ICCM_INIT_FILE          (ICCM_INIT_FILE),
+      .DCCM_INIT_FILE          (DCCM_INIT_FILE),
+      .STACK_POINTER_INIT_VALUE(STACK_POINTER_INIT_VALUE)
   ) core_top_i (
       .*
   );

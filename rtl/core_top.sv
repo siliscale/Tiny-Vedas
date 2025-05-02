@@ -34,7 +34,8 @@ DEALINGS IN THE SOFTWARE.
 
 module core_top #(
     parameter string ICCM_INIT_FILE = "",
-    parameter string DCCM_INIT_FILE = ""
+    parameter string DCCM_INIT_FILE = "",
+    parameter logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = 32'h80000000
 ) (
 
     /* Clock and Reset */
@@ -141,7 +142,9 @@ module core_top #(
   );
 
   /* Instruction Decode Unit - Stage 1 */
-  idu1 idu1_inst (
+  idu1 #(
+      .STACK_POINTER_INIT_VALUE(STACK_POINTER_INIT_VALUE)
+  ) idu1_inst (
       .clk            (clk),
       .rst_n          (rst_n),
       .idu0_out       (idu0_out),

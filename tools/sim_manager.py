@@ -94,7 +94,7 @@ def read_task_list(filename: str) -> List[str]:
 def run_verilator(test: str) -> None:
     """Execute Verilator simulation."""
     has_dmem = os.path.exists(os.path.join("work", test, "dmem.hex"))
-    verilator_cmd = f"export PROJ=$(pwd) && cd {os.path.join('work', test)} && verilator --cc --trace --trace-structs --build --timing --top-module core_top_tb --exe $PROJ/dv/verilator/core_top_tb.cpp -f $PROJ/rtl/core_top.flist -DICCM_INIT_FILE='\"imem.hex\"' -DRESET_VECTOR=32\\'h100000"
+    verilator_cmd = f"export PROJ=$(pwd) && cd {os.path.join('work', test)} && verilator --cc --trace --trace-structs --build --timing --top-module core_top_tb --exe $PROJ/dv/verilator/core_top_tb.cpp -f $PROJ/rtl/core_top.flist -DICCM_INIT_FILE='\"imem.hex\"' -DRESET_VECTOR=32\\'h100000 -DSTACK_POINTER_INIT_VALUE=32\\'h80000000"
     if has_dmem:
         verilator_cmd += f" -DDCCM_INIT_FILE='\"dmem.hex\"'"
     else:
@@ -117,7 +117,7 @@ def run_verilator(test: str) -> None:
 def run_xsim(test: str) -> None:
     """Execute XSim simulation."""
     has_dmem = os.path.exists(os.path.join("work", test, "dmem.hex"))
-    xsim_cmd = f"export PROJ=$(pwd) && cd {os.path.join('work', test)} && xvlog -sv -f $PROJ/rtl/core_top.flist --define ICCM_INIT_FILE='\"imem.hex\"' --define RESET_VECTOR=32\\'h100000"
+    xsim_cmd = f"export PROJ=$(pwd) && cd {os.path.join('work', test)} && xvlog -sv -f $PROJ/rtl/core_top.flist --define ICCM_INIT_FILE='\"imem.hex\"' --define RESET_VECTOR=32\\'h100000 --define STACK_POINTER_INIT_VALUE=32\\'h80000000"
     if has_dmem:
         xsim_cmd += f" --define DCCM_INIT_FILE='\"dmem.hex\"'"
     else:

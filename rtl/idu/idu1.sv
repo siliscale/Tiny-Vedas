@@ -30,7 +30,9 @@ DEALINGS IN THE SOFTWARE.
 `include "types.svh"
 `endif
 
-module idu1 (
+module idu1 #(
+    parameter logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = 32'h80000000
+) (
     input logic clk,
     input logic rst_n,
 
@@ -60,7 +62,9 @@ module idu1 (
   idu1_out_t idu1_out_gated;
 
   /* Instantiate Register file */
-  reg_file reg_file_i (
+  reg_file #(
+      .STACK_POINTER_INIT_VALUE(STACK_POINTER_INIT_VALUE)
+  ) reg_file_i (
       .clk      (clk),
       .rst_n    (rst_n),
       .rs1_addr (idu0_out.rs1_addr),

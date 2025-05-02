@@ -26,7 +26,9 @@ DEALINGS IN THE SOFTWARE.
 `include "global.svh"
 `endif
 
-module reg_file (
+module reg_file #(
+    parameter logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = 32'h80000000
+) (
     input logic clk,
     input logic rst_n,
 
@@ -54,7 +56,8 @@ module reg_file (
         assign reg_file[i] = 0;
       end else begin : g_reg_file_gen
         dff_rst_en #(
-            .WIDTH(XLEN)
+            .WIDTH(XLEN),
+            .RESET_VAL((i == 2) ? STACK_POINTER_INIT_VALUE : 0)
         ) reg_i (
             .clk  (clk),
             .rst_n(rst_n),
