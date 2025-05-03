@@ -191,7 +191,7 @@ module idu1 #(
       pipe_stall = exu_mul_busy;
     end else if (last_issued_instr.div) begin
       pipe_stall = exu_div_busy;
-    end else if (last_issued_instr.lsu & ~idu1_out_gated.lsu & idu1_out_gated.legal & ~idu1_out_gated.nop) begin
+    end else if (last_issued_instr.lsu & ~idu1_out_gated.lsu & idu1_out_gated.legal & ~idu1_out_gated.nop) begin /* Always stall LSU operations */
       pipe_stall = exu_lsu_busy;
     end
     pipe_stall |= exu_lsu_stall;

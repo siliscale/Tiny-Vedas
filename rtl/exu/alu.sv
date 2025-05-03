@@ -73,7 +73,7 @@ module alu (
 
   /* For JAL/JALR operation, we reuse the same datapath for reg file update */
 
-  assign a = (alu_ctrl.jal) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
+  assign a = (alu_ctrl.jal | (alu_ctrl.pc & alu_ctrl.add)) ? alu_ctrl.instr_tag : alu_ctrl.rs1_data;
 
   assign b = ({XLEN{alu_ctrl.imm_valid}} & alu_ctrl.imm) |
              ({XLEN{alu_ctrl.shimm5}} & {{(XLEN-5){1'b0}}, alu_ctrl.shamt[$clog2(
@@ -106,7 +106,7 @@ module alu (
 
   assign brn_taken = (alu_ctrl.beq & eq) | (alu_ctrl.bne & ne) | (alu_ctrl.bge & ge) | (alu_ctrl.blt & lt);
 
-  assign pc_vld = alu_ctrl.jal | (alu_ctrl.condbr & brn_taken);
+  assign pc_vld = (alu_ctrl.jal | (alu_ctrl.condbr & brn_taken)) & alu_ctrl.legal & ~alu_ctrl.nop & alu_ctrl.alu;
 
 
   assign ashift[XLEN-1:0] = $signed(a) >>> b[$clog2(XLEN)-1:0];

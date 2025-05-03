@@ -7,6 +7,7 @@ asm.basic_sub
 asm.basic_mul
 asm.basic_mul_forwarding
 asm.basic_load
+asm.basic_load_dep
 asm.basic_store
 asm.basic_jal
 asm.basic_jalr

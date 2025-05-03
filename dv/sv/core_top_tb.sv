@@ -113,7 +113,7 @@ module core_top_tb;
                 core_top_i.ifu_inst.pc_exu);
     end
 
-    if (core_top_i.exu_inst.alu_inst.alu_ctrl.condbr & ~core_top_i.exu_inst.alu_inst.brn_taken) begin  /* BEQ/BNE/BGE/BLT/BLTU/BGEU not taken */
+    if (core_top_i.exu_inst.alu_inst.alu_ctrl.condbr & ~core_top_i.exu_inst.alu_inst.brn_taken & core_top_i.exu_inst.alu_inst.alu_ctrl.legal) begin  /* BEQ/BNE/BGE/BLT/BLTU/BGEU not taken */
       $fdisplay(fd, "%5d;0x%H;0x%H;taken=false", cycle_count,
                 core_top_i.exu_inst.alu_inst.alu_ctrl.instr_tag,
                 core_top_i.exu_inst.alu_inst.alu_ctrl.instr);

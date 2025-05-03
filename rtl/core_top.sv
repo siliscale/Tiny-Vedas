@@ -193,11 +193,11 @@ module core_top #(
   ) dccm_inst (
       .clk       (clk),
       .rst_n     (rst_n),
-      .raddr     ({dccm_raddr[DATA_MEM_ADDR_WIDTH-3:2], 2'b00}),
+      .raddr     ({2'b00, dccm_raddr[DATA_MEM_ADDR_WIDTH-3:2]}),
       .rvalid_in (dccm_rvalid_in),
       .rdata     (dccm_rdata),
       .rvalid_out(dccm_rvalid_out),
-      .waddr     ({dccm_waddr[DATA_MEM_ADDR_WIDTH-3:2], 2'b00}),
+      .waddr     ({2'b00, dccm_waddr[DATA_MEM_ADDR_WIDTH-3:2]}),
       .wen       (dccm_wen),
       .wdata     (dccm_wdata)
   );

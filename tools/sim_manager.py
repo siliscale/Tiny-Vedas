@@ -12,6 +12,7 @@ import multiprocessing
 import traceback
 
 IMEM_DEPTH = 1024
+DMEM_DEPTH = 1024
 
 def run_gen(test: str) -> None:
     """Run the generator for a test."""
@@ -21,9 +22,14 @@ def run_gen(test: str) -> None:
     extension = ""
     if test_path[0] == "asm":
         extension = ".s"
+    elif test_path[0] == "c":
+        extension = ".c"
     # Try and compile the test, if it fails, print the error and exit
     try:
-        os.system(f"riscv64-unknown-elf-gcc -I{os.path.join('tests', test_path[0])} -march=rv32im -mabi=ilp32 -o work/{test}/test.elf -nostdlib -Ttext 0x100000 {os.path.join('tests', test_path[0], test_path[1] + extension)} > {os.path.join('work', test, 'compile.log')}")
+        if extension == ".s":
+            os.system(f"riscv64-unknown-elf-gcc -I{os.path.join('tests', test_path[0])} -march=rv32im -mabi=ilp32 -o work/{test}/test.elf -nostdlib {os.path.join('tests', test_path[0], test_path[1] + extension)} -Wl,-Ttext=0x100000 > {os.path.join('work', test, 'compile.log')}")
+        elif extension == ".c":
+            os.system(f"riscv64-unknown-elf-gcc -I{os.path.join('tests', test_path[0])} -march=rv32im -mabi=ilp32 -o work/{test}/test.elf -nostdlib -fno-builtin-printf -fno-common -falign-functions=4 {os.path.join('tests', test_path[0], test_path[1] + extension)} {os.path.join('tests', test_path[0], 'asm_functions', 'printf.s')} -Wl,-Ttext=0x100000 > {os.path.join('work', test, 'compile.log')}")
     except Exception as e:
         print(f"Error compiling test {test}: {e}")
         sys.exit(1)
@@ -52,6 +58,7 @@ def run_iss(test: str) -> None:
 def prepare_imem(test: str) -> None:
     """Prepare the IMEM for a test."""
     imem_path = os.path.join("work", test, "imem.hex")
+    dmem_path = os.path.join("work", test, "dmem.hex")
     elf_path = os.path.join("work", test, "test.elf")
     
     # Read the ELF file using elftools
@@ -72,6 +79,32 @@ def prepare_imem(test: str) -> None:
         # Pad with zeros to fill IMEM_DEPTH
         if len(imem_data) < IMEM_DEPTH:
             imem_data = imem_data + b'\x00' * (IMEM_DEPTH - len(imem_data))
+        
+        # Generate the data memory from the .rodata section
+        rodata_section = elf.get_section_by_name('.rodata')
+        # Get the address of the .rodata section
+        if rodata_section:
+            rodata_new = []
+            rodata_address = rodata_section.header['sh_addr']
+            rodata_base_address = rodata_address - 0x100000
+            rodata_data = rodata_section.data()
+            if len(rodata_data) > DMEM_DEPTH:
+                print(f"Warning: Data memory truncated to {DMEM_DEPTH} bytes")
+                rodata_data = rodata_data[:DMEM_DEPTH]
+            if rodata_base_address > 0:
+                # Fill with zeros
+                for i in range(rodata_base_address):
+                    rodata_new.append(0)
+                for i in range(len(rodata_data)):
+                    rodata_new.append(rodata_data[i])
+                for i in range(DMEM_DEPTH - len(rodata_new)):
+                    rodata_new.append(0)
+            with open(dmem_path, "w") as f:
+                for i in range(0, DMEM_DEPTH, 4):
+                    word = rodata_new[i:i+4]
+                    hex_str = '{:08x}'.format(int.from_bytes(word, byteorder='little'))
+                    f.write(f"{hex_str}\n")
+            
             
     # Write the instruction memory as hex, 4 bytes per line
     with open(imem_path, "w") as f:
@@ -192,6 +225,8 @@ def compare_results(test: str) -> None:
                         sim_log.write(f"ISS: {iss_exe[iss_idx]['touch'][touch_idx]}\n")
                         sim_log.write(f"RTL: {rtl_exe[iss_idx]['touch'][touch_idx]}\n")
                         test_passed = False
+            if not test_passed:
+                break
     if test_passed:
         print(f"{test} {'.' * (50 - len(test))}. PASSED")
     else:
@@ -205,7 +240,7 @@ def process_rtl_log(test: str):
     while line_idx < len(rtl_log.split("\n"))-2:
         line = rtl_log.split("\n")[line_idx].split(";")
         nxt_line = rtl_log.split("\n")[line_idx + 1].split(";")
-        if line not in ["", " "] and nxt_line not in ["", " "] and line[1] == nxt_line[1] and line[2] == nxt_line[2]: # Merge them
+        if line not in ["", " "] and nxt_line not in ["", " "] and line[1] == nxt_line[1] and line[2] == nxt_line[2] and "Nothing": # Merge them
             effect = line[3]
             nxt_effect = nxt_line[3]
             # Get the memory address
