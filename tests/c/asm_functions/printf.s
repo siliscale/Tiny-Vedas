@@ -8,7 +8,7 @@ printf:
     mv       t2, a0                   # Move the head of the string to a temporary register
 
 printf_loop:
-    lb       t0, 0(t2)                # Load the byte pointed from t2
+    lbu      t0, 0(t2)                # Load the byte pointed from t2
     beq      t0, zero, printf_exit    # If it's zero, it means we consumed the whole string
     sb       t0, 0(t1)                # else, store the byte to the UART
     addi     t2, t2, 1                # Get the next byte address

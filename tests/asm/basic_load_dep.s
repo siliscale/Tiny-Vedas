@@ -2,7 +2,7 @@
     .section .text
 
 _start:
-    lbu       x1, .rodata
+    lbu      x1, .rodata
     beq      x1, x0, zombie
     .include "eot_sequence.s"
 

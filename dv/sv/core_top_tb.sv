@@ -40,7 +40,7 @@ module core_top_tb;
   logic [    31:0] cycle_count = 0;
 
   int              fd;
-
+  int              fd_console;
   /* DUT Instantiation */
   core_top #(
       .ICCM_INIT_FILE          (ICCM_INIT_FILE),
@@ -56,6 +56,7 @@ module core_top_tb;
     /* Create a log file in the current directory */
     $timeformat(-9, 3, " ns", 10);
     fd = $fopen("rtl.log", "w");
+    fd_console = $fopen("console.log", "w");
     rst_n = 0;
     for (int i = 0; i < 10; i++) begin
       @(negedge clk);
@@ -68,6 +69,13 @@ module core_top_tb;
   always_ff @(posedge clk) begin
     if (core_top_i.dccm_wen & core_top_i.dccm_waddr == 32'h10000000) begin
       finish_seq_detected <= 1;
+    end
+  end
+
+  /* Console output */
+  always_ff @(posedge clk) begin
+    if (core_top_i.dccm_wen & core_top_i.dccm_waddr == 32'h00200000) begin
+      $fwrite(fd_console, "%c", core_top_i.dccm_wdata[7:0]);
     end
   end
 
