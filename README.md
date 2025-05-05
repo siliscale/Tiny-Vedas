@@ -4,7 +4,9 @@ This is the main repository for the free [RISC-V Processor Design Course](https:
 
 Here, you will find all the slides, notes, and code for the course.
 
-The goal of this course is to design a RISC-V RV32IM processor from scratch, that we'll call Tiny Vedas, to run [Dhrystone](https://github.com/sifive/benchmark-dhrystone), a benchmark designed for RISC-V processors.
+The goal of this course is to design a RISC-V RV32IM processor from scratch, that we'll call Tiny Vedas, to run [Dhrystone](https://github.com/sifive/benchmark-dhrystone) and implement the core on both FPGA and ASIC (we won't have an actual chip at the end, but we'll go throught the motions of building one).
+
+All free lectures are now completed ✅
 
 ## Course Outline
 
@@ -21,13 +23,15 @@ The course is divided into main + bonus lectures.
 - [Lecture 8 - Pipeline Stalls, Multiplier and Divider](docs/lecture_8/slides.pdf)
 - [Lecture 9 - Aligned and Unaligned memory access, Load/Store Unit](docs/lecture_9/slides.pdf)
 - [Lecture 10 - Handling Branches, Control Hazards and Pipeline Flushes](docs/lecture_10/slides.pdf)
-- [Lecture 11 - Implementing printf,Running Dhrystone, Conclusion](docs/lecture_11/slides.pdf)
 
 **Bonus Lectures**
-- Lecture B1 - Deploying Tiny Vedas to Arty Z7-20 FPGA
-- Lecture B2 - Building a Chip: Tiny Vedas on 7nm with OpenRoad and ASAP7
+- Lecture B1 - Compiling C programs and run them on Tiny Vedas
+- Lecture B2 - Implementing standard C functions, Running Dhrystone
+- Lecture B3 - Deploying Tiny Vedas to Arty Z7-20 FPGA
+- Lecture B4 - Building a Chip: Tiny Vedas on 7nm with OpenRoad and ASAP7
 
-You can buy bonus lectures [here](https://rv-mastery.com/courses/tiny-vedas-course-add-on).
+Preorder your bonus lectures [here](https://buy.stripe.com/00g3fy97Mcdb4UwbIO).
+Use code YT2025 at checkout for 25% off.
 
 # What computer do I need?
 
