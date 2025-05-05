@@ -37,7 +37,7 @@ Use code YT2025 at checkout for 25% off.
 
 All the course is designed to run on the latest LTS of Ubuntu. You can get it [here](https://ubuntu.com/download/desktop).
 
-Anything built after the last decade should be more than enough to run the course.
+Anything built after in the last decade should be more than enough to run the course.
 
 # Cloning this repo
 
