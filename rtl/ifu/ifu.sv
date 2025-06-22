@@ -29,7 +29,7 @@ DEALINGS IN THE SOFTWARE.
 module ifu (
     /* Clock and Reset */
     input logic            clk,
-    input logic            rst_n,
+    input logic            rstn,
     input logic [XLEN-1:0] reset_vector,
 
     /* Instruction Memory Interface */
@@ -59,9 +59,9 @@ module ifu (
   assign instr_mem_tag_out = pc_out;
 
   /* Instantiate the Program Counter */
-  pc pc_inst (
+  program_counter pc_inst (
       .clk         (clk),
-      .rst_n       (rst_n),
+      .rstn        (rstn),
       .reset_vector(reset_vector),
       .load        (pc_load),
       .inc         (~pc_load),
@@ -74,9 +74,11 @@ module ifu (
   assign instr_mem_addr_valid = pc_out_valid & ~pc_load;
 
   /* Generate the outputs */
-  dff_rst_en_flush #(INSTR_LEN + 1 + XLEN) instr_dff_rst_inst (
+  register_en_flush_sync_rstn #(
+      .WIDTH(INSTR_LEN + 1 + XLEN)
+  ) instr_dff_rst_inst (
       .clk  (clk),
-      .rst_n(rst_n),
+      .rstn (rstn),
       .din  ({instr_mem_rdata_valid, instr_mem_rdata, instr_mem_tag_in}),
       .dout ({instr_valid, instr, instr_tag}),
       .en   (~pipe_stall),

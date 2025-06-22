@@ -318,13 +318,13 @@ end
 ```verilog
 module dff_sync_reset(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic d,
     output logic q
 );
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         q <= 0;
     end else begin
         q <= d;
@@ -342,13 +342,13 @@ end
 ```verilog
 module dff_async_reset(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic d,
     output logic q
 );
 
-always_ff @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
+always_ff @(posedge clk or negedge rstn) begin
+    if (!rstn) begin
         q <= 0;
     end else begin
         q <= d;
@@ -374,14 +374,14 @@ end
 ```verilog
 module d_ff_sync_reset_en(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic en,
     input  logic d,
     output logic q
 );
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         q <= 0;
     end else if (en) begin
         q <= d;
@@ -420,13 +420,13 @@ endmodule
 ```verilog
 module register_sync_reset #(parameter integer WIDTH = 32)(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         q <= 0;
     end else begin
         q <= d;
@@ -443,14 +443,14 @@ endmodule
 ```verilog
 module register_sync_reset_en #(parameter integer WIDTH = 32)(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic en,
     input  logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         q <= 0;
     end else if (en) begin
         q <= d;
@@ -475,7 +475,7 @@ endmodule
 ```verilog
 module register_file #(parameter integer WIDTH = 32, parameter integer N = 4)(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic [$clog2(N)-1:0] read_addr,
     input  logic [$clog2(N)-1:0] write_addr,
     input  logic write_en,
@@ -486,7 +486,7 @@ module register_file #(parameter integer WIDTH = 32, parameter integer N = 4)(
 logic [WIDTH-1:0] registers [N];
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         for (int i = 0; i < N; i++) begin
             registers[i] <= 0;
         end
@@ -510,7 +510,7 @@ module register_file #(parameter integer WIDTH = 32,
                        parameter integer N_READ_PORTS = 2, 
                        parameter integer N_WRITE_PORTS = 1)(
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic [N_READ_PORTS-1:0] read_en,
     input  logic [N_WRITE_PORTS-1:0] write_en,
     input  logic [$clog2(N)-1:0] read_addr [N_READ_PORTS],
@@ -522,7 +522,7 @@ module register_file #(parameter integer WIDTH = 32,
 logic [WIDTH-1:0] registers [N];
 
 always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         for (int i = 0; i < N; i++) begin
             registers[i] <= 0;
         end

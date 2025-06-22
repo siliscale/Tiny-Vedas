@@ -34,7 +34,7 @@ DEALINGS IN THE SOFTWARE.
 
 module lsu (
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* LSU Control */
     input  idu1_out_t lsu_ctrl,
@@ -110,11 +110,11 @@ module lsu (
   /* ***** DC1 ***** */
 
   /* LSU Control Flops */
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(7)
   ) lsu_ctrl_reg (
       .clk(clk),
-      .rst_n(rst_n),
+      .rstn(rstn),
       .din({
         lsu_ctrl.by,
         lsu_ctrl.half,
@@ -128,31 +128,31 @@ module lsu (
   );
 
   /* LSU Data Flops */
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH($bits({lsu_ctrl.rs1_data, lsu_ctrl.rs2_data, lsu_ctrl.imm, lsu_ctrl.rd_addr}))
   ) lsu_data_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({lsu_ctrl.rs1_data, lsu_ctrl.rs2_data, lsu_ctrl.imm, lsu_ctrl.rd_addr}),
-      .dout ({dc1_rs1_data, dc1_rs2_data, dc1_imm, dc1_rd_addr})
+      .clk (clk),
+      .rstn(rstn),
+      .din ({lsu_ctrl.rs1_data, lsu_ctrl.rs2_data, lsu_ctrl.imm, lsu_ctrl.rd_addr}),
+      .dout({dc1_rs1_data, dc1_rs2_data, dc1_imm, dc1_rd_addr})
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(XLEN)
   ) lsu_instr_tag_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (lsu_ctrl.instr_tag),
-      .dout (dc1_lsu_instr_tag_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (lsu_ctrl.instr_tag),
+      .dout(dc1_lsu_instr_tag_out)
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(32)
   ) lsu_instr_out_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (lsu_ctrl.instr),
-      .dout (dc1_lsu_instr_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (lsu_ctrl.instr),
+      .dout(dc1_lsu_instr_out)
   );
   assign dc1_lsu_valid = dc1_legal & (dc1_load | dc1_store);
   assign dc1_computed_addr = dc1_rs1_data + {{XLEN - 12{dc1_unsign & dc1_imm[11]}}, dc1_imm[11:0]};
@@ -165,7 +165,7 @@ module lsu (
   assign dc1_forward_value = lsu_dccm_wdata;
 
   /* ****** DC2 ***** */
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH($bits(
           {
             dc2_by,
@@ -187,7 +187,7 @@ module lsu (
       ))
   ) dc2_dccm_rdata_reg (
       .clk(clk),
-      .rst_n(rst_n),
+      .rstn(rstn),
       .din({
         dc1_by,
         dc1_half,
@@ -224,22 +224,22 @@ module lsu (
       })
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(XLEN)
   ) dc2_instr_tag_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (dc1_lsu_instr_tag_out),
-      .dout (dc2_lsu_instr_tag_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (dc1_lsu_instr_tag_out),
+      .dout(dc2_lsu_instr_tag_out)
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(32)
   ) dc2_instr_out_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (dc1_lsu_instr_out),
-      .dout (dc2_lsu_instr_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (dc1_lsu_instr_out),
+      .dout(dc2_lsu_instr_out)
   );
 
   logic [2*XLEN-1:0] dc2_store_mask_base;
@@ -262,7 +262,7 @@ module lsu (
   assign dc2_load_buffer = (dc2_store_forward) ? dc2_forward_value >> {dc2_computed_addr[1:0], 3'b000} : lsu_dccm_rdata >> {dc2_computed_addr[1:0], 3'b000};
 
   /* ****** DC3 ***** */
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH($bits(
           {
             dc3_load_buffer,
@@ -283,7 +283,7 @@ module lsu (
       ))
   ) dc3_dccm_rdata_reg (
       .clk(clk),
-      .rst_n(rst_n),
+      .rstn(rstn),
       .din({
         dc2_load_buffer,
         dc2_unaligned_addr,
@@ -318,31 +318,31 @@ module lsu (
       })
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(XLEN)
   ) dc3_instr_tag_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (dc2_lsu_instr_tag_out),
-      .dout (dc3_lsu_instr_tag_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (dc2_lsu_instr_tag_out),
+      .dout(dc3_lsu_instr_tag_out)
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(32)
   ) dc3_instr_out_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (dc2_lsu_instr_out),
-      .dout (dc3_lsu_instr_out)
+      .clk (clk),
+      .rstn(rstn),
+      .din (dc2_lsu_instr_out),
+      .dout(dc3_lsu_instr_out)
   );
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH(1)
   ) stall_reg (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (lsu_stall),
-      .dout (lsu_stall_q)
+      .clk (clk),
+      .rstn(rstn),
+      .din (lsu_stall),
+      .dout(lsu_stall_q)
   );
 
   assign dc3_shamt_by = (3'd4 - {1'd0, dc3_computed_addr[1:0]});

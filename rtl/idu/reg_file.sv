@@ -30,7 +30,7 @@ module reg_file #(
     parameter logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = 32'h80000000
 ) (
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* Read Ports */
     input logic [4:0] rs1_addr,
@@ -55,15 +55,15 @@ module reg_file #(
       if (i == 0) begin : g_zero_reg
         assign reg_file[i] = 0;
       end else begin : g_reg_file_gen
-        dff_rst_en #(
+        register_en_sync_rstn #(
             .WIDTH(XLEN),
             .RESET_VAL((i == 2) ? STACK_POINTER_INIT_VALUE : 0)
         ) reg_i (
-            .clk  (clk),
-            .rst_n(rst_n),
-            .en   (rd_wr_en & (rd_addr == i)),
-            .din  (rd_data),
-            .dout (reg_file[i])
+            .clk (clk),
+            .rstn(rstn),
+            .en  (rd_wr_en & (rd_addr == i)),
+            .din (rd_data),
+            .dout(reg_file[i])
         );
       end
     end

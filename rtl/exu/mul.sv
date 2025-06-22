@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 
 module mul (
     input  logic                 clk,
-    input  logic                 rst_n,
+    input  logic                 rstn,
     input  logic                 freeze,
     input  idu1_out_t            mul_ctrl,
     output logic      [XLEN-1:0] out,
@@ -69,64 +69,82 @@ module mul (
 
   // --------------------------- Input flops    ----------------------------------
 
-  dff_rst_en #(1) valid_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.legal & mul_ctrl.mul),
-      .dout (valid_e1),
-      .en   (~freeze)
+  register_en_sync_rstn #(
+      .WIDTH(1)
+  ) valid_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.legal & mul_ctrl.mul),
+      .dout(valid_e1),
+      .en  (~freeze)
   );
-  dff_rst #(1) rs1_sign_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.rs1_sign),
-      .dout (rs1_sign_e1)
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) rs1_sign_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.rs1_sign),
+      .dout(rs1_sign_e1)
   );
-  dff_rst #(1) rs2_sign_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.rs2_sign),
-      .dout (rs2_sign_e1)
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) rs2_sign_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.rs2_sign),
+      .dout(rs2_sign_e1)
   );
-  dff_rst #(1) low_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.low),
-      .dout (low_e1)
-  );
-
-  dff_rst #(XLEN) a_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (a[XLEN-1:0]),
-      .dout (a_ff_e1[XLEN-1:0])
-  );
-  dff_rst #(XLEN) b_e1_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (b[XLEN-1:0]),
-      .dout (b_ff_e1[XLEN-1:0])
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) low_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.low),
+      .dout(low_e1)
   );
 
-  dff_rst #(5) out_rd_addr_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.rd_addr),
-      .dout (out_rd_addr_e1)
+  register_sync_rstn #(
+      .WIDTH(XLEN)
+  ) a_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (a[XLEN-1:0]),
+      .dout(a_ff_e1[XLEN-1:0])
+  );
+  register_sync_rstn #(
+      .WIDTH(XLEN)
+  ) b_e1_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (b[XLEN-1:0]),
+      .dout(b_ff_e1[XLEN-1:0])
   );
 
-  dff_rst #(1) out_rd_wr_en_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (mul_ctrl.legal & mul_ctrl.mul),
-      .dout (out_rd_wr_en_e1)
+  register_sync_rstn #(
+      .WIDTH(5)
+  ) out_rd_addr_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.rd_addr),
+      .dout(out_rd_addr_e1)
   );
 
-  dff_rst #(XLEN + 32) instr_tag_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({mul_ctrl.instr_tag, mul_ctrl.instr}),
-      .dout ({instr_tag_e1, instr_e1})
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) out_rd_wr_en_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (mul_ctrl.legal & mul_ctrl.mul),
+      .dout(out_rd_wr_en_e1)
+  );
+
+  register_sync_rstn #(
+      .WIDTH(XLEN + 32)
+  ) instr_tag_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({mul_ctrl.instr_tag, mul_ctrl.instr}),
+      .dout({instr_tag_e1, instr_e1})
   );
 
 
@@ -139,51 +157,65 @@ module mul (
   assign rs2_neg_e1 = rs2_sign_e1 & b_e1[XLEN-1];
 
 
-  dff_rst_en #(1) valid_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (valid_e1),
-      .dout (valid_e2),
-      .en   (~freeze)
+  register_en_sync_rstn #(
+      .WIDTH(1)
+  ) valid_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (valid_e1),
+      .dout(valid_e2),
+      .en  (~freeze)
   );
-  dff_rst #(1) low_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (low_e1),
-      .dout (low_e2)
-  );
-
-  dff_rst #(XLEN + 1) a_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({rs1_neg_e1, a_e1[XLEN-1:0]}),
-      .dout (a_ff_e2[XLEN:0])
-  );
-  dff_rst #(XLEN + 1) b_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({rs2_neg_e1, b_e1[XLEN-1:0]}),
-      .dout (b_ff_e2[XLEN:0])
-  );
-  dff_rst #(5) out_rd_addr_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (out_rd_addr_e1),
-      .dout (out_rd_addr_e2)
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) low_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (low_e1),
+      .dout(low_e2)
   );
 
-  dff_rst #(1) out_rd_wr_en_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (out_rd_wr_en_e1),
-      .dout (out_rd_wr_en_e2)
+  register_sync_rstn #(
+      .WIDTH(XLEN + 1)
+  ) a_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({rs1_neg_e1, a_e1[XLEN-1:0]}),
+      .dout(a_ff_e2[XLEN:0])
+  );
+  register_sync_rstn #(
+      .WIDTH(XLEN + 1)
+  ) b_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({rs2_neg_e1, b_e1[XLEN-1:0]}),
+      .dout(b_ff_e2[XLEN:0])
+  );
+  register_sync_rstn #(
+      .WIDTH(5)
+  ) out_rd_addr_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (out_rd_addr_e1),
+      .dout(out_rd_addr_e2)
   );
 
-  dff_rst #(XLEN + 32) instr_tag_e2_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({instr_tag_e1, instr_e1}),
-      .dout ({instr_tag_e2, instr_e2})
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) out_rd_wr_en_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (out_rd_wr_en_e1),
+      .dout(out_rd_wr_en_e2)
+  );
+
+  register_sync_rstn #(
+      .WIDTH(XLEN + 32)
+  ) instr_tag_e2_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({instr_tag_e1, instr_e1}),
+      .dout({instr_tag_e2, instr_e2})
   );
 
 
@@ -194,38 +226,48 @@ module mul (
 
   assign prod_e2[2*XLEN+1:0] = a_ff_e2 * b_ff_e2;
 
-  dff_rst #(1) low_e3_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (low_e2),
-      .dout (low_e3)
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) low_e3_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (low_e2),
+      .dout(low_e3)
   );
-  dff_rst #(2 * XLEN + 1) prod_e3_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (prod_e2[2*XLEN:0]),
-      .dout (prod_e3[2*XLEN:0])
-  );
-
-  dff_rst #(5) out_rd_addr_e3_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (out_rd_addr_e2),
-      .dout (out_rd_addr_e3)
+  register_sync_rstn #(
+      .WIDTH(2 * XLEN + 1)
+  ) prod_e3_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (prod_e2[2*XLEN:0]),
+      .dout(prod_e3[2*XLEN:0])
   );
 
-  dff_rst #(1) out_rd_wr_en_e3_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  (out_rd_wr_en_e2),
-      .dout (out_rd_wr_en_e3)
+  register_sync_rstn #(
+      .WIDTH(5)
+  ) out_rd_addr_e3_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (out_rd_addr_e2),
+      .dout(out_rd_addr_e3)
   );
 
-  dff_rst #(XLEN + 32) instr_tag_e3_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({instr_tag_e2, instr_e2}),
-      .dout ({instr_tag_e3, instr_e3})
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) out_rd_wr_en_e3_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din (out_rd_wr_en_e2),
+      .dout(out_rd_wr_en_e3)
+  );
+
+  register_sync_rstn #(
+      .WIDTH(XLEN + 32)
+  ) instr_tag_e3_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({instr_tag_e2, instr_e2}),
+      .dout({instr_tag_e3, instr_e3})
   );
   // ----------------------- E3 Logic Stage -------------------------
 

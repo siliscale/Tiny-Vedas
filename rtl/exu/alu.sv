@@ -33,7 +33,7 @@ DEALINGS IN THE SOFTWARE.
 module alu (
 
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     input idu1_out_t alu_ctrl,
 
@@ -137,27 +137,31 @@ module alu (
   assign alu_wb_rd_addr_i = alu_ctrl.rd_addr;
   assign alu_wb_rd_wr_en_i = alu_ctrl.rd & alu_ctrl.legal & alu_ctrl.alu & ~alu_ctrl.nop;
 
-  dff_rst #(
+  register_sync_rstn #(
       .WIDTH($bits({alu_wb_data_i, alu_wb_rd_addr_i, alu_wb_rd_wr_en_i}))
   ) alu_wb_data_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({alu_wb_data_i, alu_wb_rd_addr_i, alu_wb_rd_wr_en_i}),
-      .dout ({alu_wb_data, alu_wb_rd_addr, alu_wb_rd_wr_en})
+      .clk (clk),
+      .rstn(rstn),
+      .din ({alu_wb_data_i, alu_wb_rd_addr_i, alu_wb_rd_wr_en_i}),
+      .dout({alu_wb_data, alu_wb_rd_addr, alu_wb_rd_wr_en})
   );
 
-  dff_rst #(XLEN + 32) instr_tag_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({alu_ctrl.instr_tag, alu_ctrl.instr}),
-      .dout ({instr_tag_out, instr_out})
+  register_sync_rstn #(
+      .WIDTH(XLEN + 32)
+  ) instr_tag_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({alu_ctrl.instr_tag, alu_ctrl.instr}),
+      .dout({instr_tag_out, instr_out})
   );
 
-  dff_rst #(XLEN + 1) pc_ff (
-      .clk  (clk),
-      .rst_n(rst_n),
-      .din  ({pc, pc_vld}),
-      .dout ({pc_out, pc_load})
+  register_sync_rstn #(
+      .WIDTH(XLEN + 1)
+  ) pc_ff (
+      .clk (clk),
+      .rstn(rstn),
+      .din ({pc, pc_vld}),
+      .dout({pc_out, pc_load})
   );
 
 

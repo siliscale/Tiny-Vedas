@@ -34,7 +34,7 @@ module core_top_tb;
   localparam logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = `STACK_POINTER_INIT_VALUE;
 
   logic            clk = 0;
-  logic            rst_n;
+  logic            rstn;
   logic [XLEN-1:0] reset_vector = `RESET_VECTOR;
 
   logic [    31:0] cycle_count = 0;
@@ -57,11 +57,11 @@ module core_top_tb;
     $timeformat(-9, 3, " ns", 10);
     fd = $fopen("rtl.log", "w");
     fd_console = $fopen("console.log", "w");
-    rst_n = 0;
+    rstn = 0;
     for (int i = 0; i < 10; i++) begin
       @(negedge clk);
     end
-    rst_n = 1;
+    rstn = 1;
   end
 
   /* Finish Sequence Detector */
@@ -93,7 +93,7 @@ module core_top_tb;
 
   /* Cycle counter */
   always_ff @(posedge clk) begin
-    if (rst_n) begin
+    if (rstn) begin
       cycle_count <= cycle_count + 1;
       cycle_count_last_retired <= cycle_count + 1;
     end

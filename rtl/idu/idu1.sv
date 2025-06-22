@@ -34,7 +34,7 @@ module idu1 #(
     parameter logic [XLEN-1:0] STACK_POINTER_INIT_VALUE = 32'h80000000
 ) (
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* IDU0 -> IDU1 Interface */
     input idu0_out_t idu0_out,
@@ -66,7 +66,7 @@ module idu1 #(
       .STACK_POINTER_INIT_VALUE(STACK_POINTER_INIT_VALUE)
   ) reg_file_i (
       .clk      (clk),
-      .rst_n    (rst_n),
+      .rstn    (rstn),
       .rs1_addr (idu0_out.rs1_addr),
       .rs2_addr (idu0_out.rs2_addr),
       .rs1_rd_en(idu0_out.rs1 & idu0_out.legal),
@@ -131,22 +131,22 @@ module idu1 #(
   assign idu1_out_i.nop = idu0_out.nop;
   assign idu1_out_i.legal = idu0_out.legal;
 
-  dff_rst_en_flush #(
+  register_en_flush_sync_rstn #(
       .WIDTH($bits(idu1_out_t))
   ) idu1_out_reg (
       .clk  (clk),
-      .rst_n(rst_n),
+      .rstn (rstn),
       .din  (idu1_out_i),
       .dout (idu1_out_before_fwd),
       .en   (~pipe_stall),
       .flush(pipe_flush)
   );
 
-  dff_rst_en_flush #(
+  register_en_flush_sync_rstn #(
       .WIDTH($bits(last_issued_instr_t))
   ) last_issued_instr_reg (
       .clk(clk),
-      .rst_n(rst_n),
+      .rstn(rstn),
       .din({
         idu1_out_before_fwd.instr,
         idu1_out_before_fwd.instr_tag,

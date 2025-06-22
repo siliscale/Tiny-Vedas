@@ -34,7 +34,7 @@ module iccm #(
 ) (
 
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* Read Port */
     input  logic [($clog2(DEPTH*WIDTH/8))-1:0] raddr,       /* Byte address */
@@ -72,7 +72,7 @@ module iccm #(
 
   /* Read Port */
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       rvalid_out <= 0;
       line_data  <= 0;
       rtag_out   <= 0;
@@ -97,7 +97,7 @@ module dccm #(
     parameter string INIT_FILE = ""
 ) (
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* Read Port */
     input  logic [$clog2(DEPTH)-1:0] raddr,
@@ -120,7 +120,7 @@ module dccm #(
 
   /* Read Port */
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       rvalid_out <= 0;
       rdata <= 0;
     end else begin

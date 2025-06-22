@@ -40,7 +40,7 @@ module register_file_multiport #(  /* Multi-Port */
   logic [WIDTH-1:0] registers[N];
 
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       for (int i = 0; i < N; i++) begin
         registers[i] <= 0;
       end

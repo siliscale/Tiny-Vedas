@@ -24,13 +24,13 @@ DEALINGS IN THE SOFTWARE.
 
 module d_ff_sync_reset   (
     input  logic clk,
-    input  logic rst_n,
+    input  logic rstn,
     input  logic d,
     output logic q
 );
 
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
         q <= 0;
     end else begin
         q <= d;

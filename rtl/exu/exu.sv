@@ -32,7 +32,7 @@ DEALINGS IN THE SOFTWARE.
 
 module exu (
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* IDU1 -> EXU Interface */
     input idu1_out_t idu1_out,
@@ -92,7 +92,7 @@ module exu (
 
   alu alu_inst (
       .clk            (clk),
-      .rst_n          (rst_n),
+      .rstn          (rstn),
       .alu_ctrl       (idu1_out),
       .alu_wb_data    (alu_wb_data),
       .alu_wb_rd_addr (alu_wb_rd_addr),
@@ -105,7 +105,7 @@ module exu (
 
   mul mul_inst (
       .clk          (clk),
-      .rst_n        (rst_n),
+      .rstn        (rstn),
       .freeze       (1'b0),
       .mul_ctrl     (idu1_out),
       .out          (mul_wb_data),
@@ -118,7 +118,7 @@ module exu (
 
   div div_inst (
       .clk                     (clk),
-      .rst_n                   (rst_n),
+      .rstn                   (rstn),
       .dp                      (idu1_out),
       .dec_tlu_fast_div_disable(1'b0),
       .flush_lower             (1'b0),
@@ -135,7 +135,7 @@ module exu (
 
   lsu lsu_inst (
       .clk                (clk),
-      .rst_n              (rst_n),
+      .rstn              (rstn),
       .lsu_ctrl           (idu1_out),
       .lsu_wb_data        (lsu_wb_data),
       .lsu_wb_rd_addr     (lsu_wb_rd_addr),

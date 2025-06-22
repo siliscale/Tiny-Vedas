@@ -29,7 +29,7 @@ module memory_multiport #(  /* Separate Read and Write Ports, single port */
     integer N_WRITE_PORTS = 1
 ) (
     input  logic                     clk,
-    input  logic                     rst_n,
+    input  logic                     rstn,
     input  logic [ N_READ_PORTS-1:0] read_en,
     input  logic [N_WRITE_PORTS-1:0] write_en,
     input  logic [    $clog2(N)-1:0] read_addr [ N_READ_PORTS],
@@ -41,7 +41,7 @@ module memory_multiport #(  /* Separate Read and Write Ports, single port */
   logic [WIDTH-1:0] memory[N];
 
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       for (int i = 0; i < N; i++) begin
         memory[i] <= 0;
       end

@@ -11,7 +11,7 @@
 module lsu_tb;
 
   logic clk = 0;
-  logic rst_n = 0;
+  logic rstn = 0;
 
   /* LSU Control */
   idu1_out_t lsu_ctrl, lsu_ctrl_d;
@@ -35,7 +35,7 @@ module lsu_tb;
 
   lsu DUT (
       .clk                (clk),
-      .rst_n              (rst_n),
+      .rstn              (rstn),
       .lsu_ctrl           (lsu_ctrl),
       .lsu_busy           (lsu_busy),
       .lsu_wb_data        (lsu_wb_data),
@@ -60,7 +60,7 @@ module lsu_tb;
     for (int i = 0; i < 10; i++) begin
       @(negedge clk);
     end
-    rst_n = 1;
+    rstn = 1;
     for (int i = 0; i < 10; i++) begin
       @(negedge clk);
     end

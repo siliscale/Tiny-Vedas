@@ -26,13 +26,13 @@ module register_sync_reset #(
     parameter integer WIDTH = 32
 ) (
     input  logic             clk,
-    input  logic             rst_n,
+    input  logic             rstn,
     input  logic [WIDTH-1:0] d,
     output logic [WIDTH-1:0] q
 );
 
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       q <= 0;
     end else begin
       q <= d;

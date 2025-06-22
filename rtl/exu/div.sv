@@ -32,8 +32,8 @@ DEALINGS IN THE SOFTWARE.
 
 
 module div (
-    input logic clk,   // Top level clock
-    input logic rst_n, // Reset
+    input logic clk,  // Top level clock
+    input logic rstn, // Reset
 
     input logic dec_tlu_fast_div_disable,  // Disable small number optimization
 
@@ -90,51 +90,78 @@ module div (
   assign dividend = dp.rs1_data;
   assign divisor  = dp.rs2_data;
 
-  dff_rst #(1) flush_any_ff (
-      .*,
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) flush_any_ff (
+      .clk (clk),
+      .rstn(rstn),
       .din (flush_lower),
       .dout(flush_lower_ff)
   );
-  dff_rst #(1) e1val_ff (
-      .*,
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) e1val_ff (
+      .clk (clk),
+      .rstn(rstn),
       .din (dp.legal & dp.div & ~flush_lower_ff),
       .dout(valid_ff_e1)
   );
-  dff_rst #(1) runff (
-      .*,
+  register_sync_rstn #(
+      .WIDTH(1)
+  ) runff (
+      .clk (clk),
+      .rstn(rstn),
       .din (run_in),
       .dout(run_state)
   );
-  dff_rst #(6) countff (
-      .*,
+  register_sync_rstn #(
+      .WIDTH(6)
+  ) countff (
+      .clk (clk),
+      .rstn(rstn),
       .din (count_in[5:0]),
       .dout(count[5:0])
   );
-  dff_rst_en #(4) miscf (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(4)
+  ) miscf (
+      .clk (clk),
+      .rstn(rstn),
       .din ({dividend[31], divisor[31], sign_eff, dp.rem}),
       .dout({dividend_neg_ff, divisor_neg_ff, sign_ff, rem_ff}),
       .en  (dp.legal & dp.div)
   );
-  dff_rst #(5) smallnumff (
-      .*,
+  register_sync_rstn #(
+      .WIDTH(5)
+  ) smallnumff (
+      .clk (clk),
+      .rstn(rstn),
       .din ({smallnum_case, smallnum[3:0]}),
       .dout({smallnum_case_ff, smallnum_ff[3:0]})
   );
-  dff_rst_en #(33) mff (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(33)
+  ) mff (
+      .clk (clk),
+      .rstn(rstn),
       .en  (dp.legal & dp.div),
       .din ({~dp.unsign & divisor[31], divisor[31:0]}),
       .dout(m_ff[32:0])
   );
-  dff_rst_en #(33) qff (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(33)
+  ) qff (
+      .clk (clk),
+      .rstn(rstn),
       .en  (qff_enable),
       .din (q_in[32:0]),
       .dout(q_ff[32:0])
   );
-  dff_rst_en #(33) aff (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(33)
+  ) aff (
+      .clk (clk),
+      .rstn(rstn),
       .en  (aff_enable),
       .din (a_in[32:0]),
       .dout(a_ff[32:0])
@@ -153,15 +180,21 @@ module div (
       .dout(a_ff_comp[31:0])
   );
 
-  dff_rst_en #(5) out_addr_ff (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(5)
+  ) out_addr_ff (
+      .clk (clk),
+      .rstn(rstn),
       .en  (dp.legal & dp.div),
       .din (dp.rd_addr),
       .dout(out_addr)
   );
 
-  dff_rst_en #(XLEN + INSTR_LEN) instr_tag_ff (
-      .*,
+  register_en_sync_rstn #(
+      .WIDTH(XLEN + INSTR_LEN)
+  ) instr_tag_ff (
+      .clk (clk),
+      .rstn(rstn),
       .en  (dp.legal & dp.div),
       .din ({dp.instr_tag, dp.instr}),
       .dout({instr_tag_out, instr_out})
@@ -306,8 +339,10 @@ module div (
 
   assign shortq_shift[3:0] = ({4{shortq_enable}} & shortq_raw[3:0]);
 
-  dff #(5) i_shortq_ff (
-      .*,
+  register #(
+      .WIDTH(5)
+  ) i_shortq_ff (
+      .clk (clk),
       .din ({shortq_enable, shortq_shift[3:0]}),
       .dout({shortq_enable_ff, shortq_shift_xx[3:0]})
   );
@@ -337,8 +372,10 @@ module div (
   // *** End   Short Q *** }}
 
 
-  dff #(1) out_valid_ff (
-      .*,
+  register #(
+      .WIDTH(1)
+  ) out_valid_ff (
+      .clk (clk),
       .din (finish),
       .dout(out_valid)
   );

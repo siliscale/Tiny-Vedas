@@ -40,7 +40,7 @@ module core_top #(
 
     /* Clock and Reset */
     input logic            clk,
-    input logic            rst_n,
+    input logic            rstn,
     input logic [XLEN-1:0] reset_vector
 
 );
@@ -101,7 +101,7 @@ module core_top #(
       .INIT_FILE(ICCM_INIT_FILE)
   ) iccm_inst (
       .clk       (clk),
-      .rst_n     (rst_n),
+      .rstn     (rstn),
       .raddr     (instr_mem_addr),
       .rtag_in   (instr_mem_tag_out),
       .rvalid_in (instr_mem_addr_valid),
@@ -113,7 +113,7 @@ module core_top #(
   /* Instruction Fetch Unit */
   ifu ifu_inst (
       .clk                  (clk),
-      .rst_n                (rst_n),
+      .rstn                (rstn),
       .reset_vector         (reset_vector),
       .instr_mem_addr       (instr_mem_addr),
       .instr_mem_addr_valid (instr_mem_addr_valid),
@@ -132,7 +132,7 @@ module core_top #(
   /* Instruction Decode Unit - Stage 0 */
   idu0 idu0_inst (
       .clk        (clk),
-      .rst_n      (rst_n),
+      .rstn      (rstn),
       .instr      (instr),
       .instr_valid(instr_valid),
       .instr_tag  (instr_tag),
@@ -146,7 +146,7 @@ module core_top #(
       .STACK_POINTER_INIT_VALUE(STACK_POINTER_INIT_VALUE)
   ) idu1_inst (
       .clk            (clk),
-      .rst_n          (rst_n),
+      .rstn          (rstn),
       .idu0_out       (idu0_out),
       .idu1_out       (idu1_out),
       .exu_wb_data    (exu_wb_data),
@@ -163,7 +163,7 @@ module core_top #(
   /* Execute Unit */
   exu exu_inst (
       .clk            (clk),
-      .rst_n          (rst_n),
+      .rstn          (rstn),
       .idu1_out       (idu1_out),
       /* ONLY FOR DEBUG */
       .instr_tag_out  (exu_instr_tag_out),
@@ -192,7 +192,7 @@ module core_top #(
       .INIT_FILE(DCCM_INIT_FILE)
   ) dccm_inst (
       .clk       (clk),
-      .rst_n     (rst_n),
+      .rstn     (rstn),
       .raddr     ({2'b00, dccm_raddr[DATA_MEM_ADDR_WIDTH-3:2]}),
       .rvalid_in (dccm_rvalid_in),
       .rdata     (dccm_rdata),

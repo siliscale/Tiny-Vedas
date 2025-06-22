@@ -28,7 +28,7 @@ module memory_tb;
   localparam integer N = 4;
 
   logic clk = 0;
-  logic rst_n = 0;
+  logic rstn = 0;
   logic read_en = 0;
   logic write_en = 0;
   logic [$clog2(N)-1:0] read_addr = 0;
@@ -41,7 +41,7 @@ module memory_tb;
       .N(N)
   ) memory_i (
       .clk(clk),
-      .rst_n(rst_n),
+      .rstn(rstn),
       .read_en(read_en),
       .write_en(write_en),
       .read_addr(read_addr),
@@ -53,17 +53,17 @@ module memory_tb;
   always #5ns clk <= ~clk;  /* 100MHz clock, 50% duty cycle */
 
   initial begin
-    rst_n = 0;
+    rstn = 0;
 
     /* Write to address 0 */
     @(posedge clk);
-    rst_n = 1;
+    rstn = 1;
     @(negedge clk);
     write_en = 1;
     write_addr = 0;
     data_in = $urandom;
     @(posedge clk);
-    $display("rst_n = %d, write_en = %d, write_addr = %d, data_in = %d, data_out = %d", rst_n,
+    $display("rstn = %d, write_en = %d, write_addr = %d, data_in = %d, data_out = %d", rstn,
              write_en, write_addr, data_in, data_out);
     @(negedge clk);
     write_en = 0;
@@ -74,7 +74,7 @@ module memory_tb;
     write_addr = 1;
     data_in = $urandom;
     @(posedge clk);
-    $display("rst_n = %d, write_en = %d, write_addr = %d, data_in = %d, data_out = %d", rst_n,
+    $display("rstn = %d, write_en = %d, write_addr = %d, data_in = %d, data_out = %d", rstn,
              write_en, write_addr, data_in, data_out);
     @(negedge clk);
     write_en = 0;
@@ -86,7 +86,7 @@ module memory_tb;
     read_addr = 0;
     @(posedge clk);
     @(posedge clk);
-    $display("rst_n = %d, read_en = %d, read_addr = %d, data_out = %d", rst_n, read_en, read_addr,
+    $display("rstn = %d, read_en = %d, read_addr = %d, data_out = %d", rstn, read_en, read_addr,
              data_out);
     @(negedge clk);
     read_en = 0;
@@ -97,7 +97,7 @@ module memory_tb;
     read_addr = 1;
     @(posedge clk);
     @(posedge clk);
-    $display("rst_n = %d, read_en = %d, read_addr = %d, data_out = %d", rst_n, read_en, read_addr,
+    $display("rstn = %d, read_en = %d, read_addr = %d, data_out = %d", rstn, read_en, read_addr,
              data_out);
     @(negedge clk);
     read_en = 0;

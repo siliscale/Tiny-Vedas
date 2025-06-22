@@ -27,7 +27,7 @@ module memory #(  /* Separate Read and Write Ports, single port */
     integer N = 4
 ) (
     input  logic                 clk,
-    input  logic                 rst_n,
+    input  logic                 rstn,
     input  logic                 read_en,
     input  logic                 write_en,
     input  logic [$clog2(N)-1:0] read_addr,
@@ -39,7 +39,7 @@ module memory #(  /* Separate Read and Write Ports, single port */
   logic [WIDTH-1:0] memory[N];
 
   always_ff @(posedge clk) begin
-    if (!rst_n) begin
+    if (!rstn) begin
       for (int i = 0; i < N; i++) begin
         memory[i] <= 0;
       end

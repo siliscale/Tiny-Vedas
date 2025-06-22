@@ -34,7 +34,7 @@ module idu0 (
 
     /* Clock and Reset */
     input logic clk,
-    input logic rst_n,
+    input logic rstn,
 
     /* IFU Interface */
     input logic [INSTR_LEN-1:0] instr,
@@ -120,11 +120,11 @@ module idu0 (
   assign idu0_out_i.legal = decode_out.legal;
 
   /* Output Flop */
-  dff_rst_en_flush #($bits(
-      idu0_out_t
-  )) idu0_out_flop_inst (
+  register_en_flush_sync_rstn #(
+      .WIDTH($bits(idu0_out_t))
+  ) idu0_out_flop_inst (
       .clk  (clk),
-      .rst_n(rst_n),
+      .rstn (rstn),
       .din  (idu0_out_i),
       .dout (idu0_out),
       .en   (~pipe_stall),
