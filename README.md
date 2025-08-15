@@ -2,6 +2,8 @@
 
 A complete, open-source implementation of a RISC-V RV32IM processor written in SystemVerilog. Tiny Vedas is a 4-stage pipelined processor with full RV32IM instruction set support, hazard handling, and comprehensive verification.
 
+It is used as a reference for a [free course on RISC-V Processor Design](https://youtu.be/izPdo7n1u1I).
+
 ## Features
 
 ### Architecture
@@ -69,6 +71,7 @@ tiny-vedas/
 │   ├── sim_manager.py    # Simulation manager
 │   └── riscv_sim         # RISC-V simulator
 ├── SVLib/                 # SystemVerilog library
+├── docs/                  # Documentation and Slides for the course
 ├── Makefile              # Build and simulation targets
 └── LICENSE               # Apache 2.0 license
 ```
