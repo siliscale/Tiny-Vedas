@@ -1,6 +1,7 @@
 [submodule "SVLib"]
 	path = SVLib
 	url = git@github.com:siliscale/SVLib.git
-[submodule "odt"]
-	path = odt
+
+[submodule "open-decode-tables"]
+	path = open-decode-tables
 	url = git@github.com:siliscale/open-decode-tables.git
