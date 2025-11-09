@@ -93,48 +93,6 @@ typedef struct packed {
 
 typedef struct packed {
 
-  logic alu;
-  logic rs1;
-  logic rs2;
-  logic imm12;
-  logic rd;
-  logic shimm5;
-  logic imm20;
-  logic pc;
-  logic load;
-  logic store;
-  logic lsu;
-  logic add;
-  logic sub;
-  logic land;
-  logic lor;
-  logic lxor;
-  logic sll;
-  logic sra;
-  logic srl;
-  logic slt;
-  logic unsign;
-  logic condbr;
-  logic beq;
-  logic bne;
-  logic bge;
-  logic blt;
-  logic jal;
-  logic by;
-  logic half;
-  logic word;
-  logic mul;
-  logic rs1_sign;
-  logic rs2_sign;
-  logic low;
-  logic div;
-  logic rem;
-  logic nop;
-  logic legal;
-} decode_out_t;
-
-typedef struct packed {
-
   logic [31:0]             instr;
   logic [XLEN-1:0]         instr_tag;
   logic [XLEN-1:0]         rs1_data;

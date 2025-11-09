@@ -21,7 +21,7 @@ lsu_sim:
 	xsim sim --runall
 
 decodes:
-	python3 tools/dec_table_gen.py rtl/idu/decode
+	python3 open-decode-tables/src/main.py -t open-decode-tables/tables/rv32im.yaml -o rtl/idu
 
 clean:
 	rm -rf obj_dir

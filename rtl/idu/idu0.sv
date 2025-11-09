@@ -66,9 +66,9 @@ module idu0 (
   decode_out_t decode_out;
 
   /* Instantiate Decode Table */
-  decode decode_inst (
-      .i         (instr),
-      .decode_out(decode_out)
+  rv32im_decoder decode_inst (
+      .i(instr),
+      .o(decode_out)
   );
 
 
